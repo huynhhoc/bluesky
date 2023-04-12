@@ -54,6 +54,10 @@ def cartData(request):
 
     return {'cartItems': cartItems, 'order': order, 'items': items}
 
+def getOrder(request, data):
+    order = data['form']['order']
+    print ('order: ', order)
+    return order
 
 def guestOrder(request, data):
     name = data['form']['name']

@@ -18,34 +18,39 @@ def store(request):
     context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/store.html', context)
 
-
 def cart(request):
     data = cartData(request)
-
     cartItems = data['cartItems']
     order = data['order']
     items = data['items']
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
-
-def ordered(request):
-    data = cartData(request)
-    cartItems = data['cartItems']
-    order = data['order']
-    items = data['items']
-    context = {'items': items, 'order': order, 'cartItems': cartItems}
+#-----------------------------------------------------------------------------
+def searchOrdered(request):
+    items = None
+    cartItems = None
+    context = None
+    try:
+        data = json.loads(request.body)
+        orderid = data['form']['order']
+        order_item = OrderItem.objects.get(id = orderid)
+        items = order_item.order.orderitem_set.all()
+        order = Order.objects.get(id=orderid)
+        context = {'items': items, 'order': order, 'cartItems': cartItems}
+    except Exception as ex:
+        print ("error: ", ex)
+        pass
+    print("context: ", context)
     return render(request, 'store/ordered.html', context)
+#-------------------------------------------------------------------------------
 def checkout(request):
     data = cartData(request)
-
     cartItems = data['cartItems']
     order = data['order']
     items = data['items']
-
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/checkout.html', context)
-
 
 def updateItem(request):
     data = json.loads(request.body)
