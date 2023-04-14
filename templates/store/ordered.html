@@ -75,11 +75,26 @@
             submitFormData()
 	    })
 
-
+		function getToken(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
 	    function submitFormData(){
 	    	console.log('Search button clicked')
 			var orderFormData ={'order': form.order.value}
 	    	var url = "/search_ordered/"
+			//var csrftoken = getToken('csrftoken')
 	    	fetch(url, {
 	    		method:'POST',
 	    		headers:{
@@ -90,7 +105,7 @@
 
 	    	})
 	    	.then((response) => response.json())
-	    	.then((data) => {
+			.then((data) => {
 				console.log('Success:', data);
 				alert('Transaction completed');
 

@@ -27,21 +27,24 @@ def cart(request):
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
 #-----------------------------------------------------------------------------
+from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
+@csrf_exempt
 def searchOrdered(request):
     items = None
     cartItems = None
     context = None
+    order = None
     try:
         data = json.loads(request.body)
         orderid = data['form']['order']
         order_item = OrderItem.objects.get(id = orderid)
         items = order_item.order.orderitem_set.all()
         order = Order.objects.get(id=orderid)
-        context = {'items': items, 'order': order, 'cartItems': cartItems}
     except Exception as ex:
         print ("error: ", ex)
-        pass
-    print("context: ", context)
+    context = {'items': items,'order': order}
+    print ("context: ", context)
     return render(request, 'store/ordered.html', context)
 #-------------------------------------------------------------------------------
 def checkout(request):
