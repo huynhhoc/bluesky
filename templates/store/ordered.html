@@ -15,7 +15,7 @@
      <div class="row">
 		<div class="col-lg-6">
 			<div class="box-element" id="form-wrapper">
-				<form id="shipping-form">
+				<form id="form">
 					<div id="shipping-info">
 						<hr>
 						<p>Shipping Information:</p>
@@ -47,8 +47,20 @@
 		</div>
 
 		<div class="col-lg-6">
-			<div class="box-element" id="cart-items">
-				{% csrf_token %}
+			<div class="box-element">
+				<hr>
+				<h3>Order Summary</h3>
+				<hr>
+				{% for item in items %}
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+					<div style="flex:2"><p>{{item.product.name}}</p></div>
+					<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
+					<div style="flex:1"><p>x{{item.quantity}}</p></div>
+				</div>
+				{% endfor %}
+				<h5>Items:   {{order.get_cart_items}}</h5>
+				<h5>Total:   ${{order.get_cart_total|floatformat:2}}</h5>
 			</div>
 		</div>
 	</div>
@@ -78,45 +90,31 @@
                 }
                 return cookieValue;
             }
-			function submitFormData(){
-				var orderFormData ={'order': form.order.value}
-				var url = "/search_ordered/"
-				//var csrftoken = getToken('csrftoken')
-				fetch(url, {
-					method:'POST',
-					headers:{
-						'Content-Type':'applicaiton/json',
-						'X-CSRFToken':csrftoken,
-					},
-					body:JSON.stringify({'form':orderFormData}),
+	    function submitFormData(){
+	    	console.log('Search button clicked')
+			var orderFormData ={'order': form.order.value}
+	    	var url = "/search_ordered/"
+			//var csrftoken = getToken('csrftoken')
+	    	fetch(url, {
+	    		method:'POST',
+	    		headers:{
+	    			'Content-Type':'applicaiton/json',
+	    			'X-CSRFToken':csrftoken,
+	    		},
+	    		body:JSON.stringify({'form':orderFormData}),
+
+	    	})
+	    	.then((response) => response.json())
+			.then((data) => {
+				console.log('Success:', data);
+				alert('Transaction completed');
+
+				cart = {}
+				document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+				window.location.href = "{% url 'store' %}"
+
 				})
-				.then((response) => response.json())
-				.then((data) => {
-					console.log('Success:', data);
-					alert('Transaction completed');
-					// Update the items in the cart
-					var itemsHtml = "";
-					for (var i = 0; i < data.items.length; i++) {
-						var item = data.items[i];
-						itemsHtml += '<div class="cart-row">';
-						itemsHtml += '<div style="flex:2"><img class="row-image" src="' + item.product.imageURL + '"></div>';
-						itemsHtml += '<div style="flex:2"><p>' + item.product.name + '</p></div>';
-						itemsHtml += '<div style="flex:1"><p>$' + item.product.price.toFixed(2) + '</p></div>';
-						itemsHtml += '<div style="flex:1"><p>x' + item.quantity + '</p></div>';
-						itemsHtml += '</div>';
-					}
-					itemsHtml += '<h5>Items:   ' + data.cart_items + '</h5>';
-					itemsHtml += '<h5>Total:   $' + data.cart_total.toFixed(2) + '</h5>';
-
-					var cartItemsDiv = document.getElementById("cart-items");
-					cartItemsDiv.innerHTML = itemsHtml;
-
-					// Clear the form
-					form.reset();
-
-					// Redirect to the home page
-					window.location.href = "{% url 'store' %}"
-				})
-			}
+	    }
 	</script>
 {% endblock content %}
