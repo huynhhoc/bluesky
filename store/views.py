@@ -55,8 +55,13 @@ def search_ordered(request):
             context = {'items': jitems, 'cart_items': nItems, 'cart_total': total}
             print("context: ", context)
             return JsonResponse(context) # send JSON response
+        except json.decoder.JSONDecodeError:
+            render(request, 'store/ordered.html')
+        except Order.DoesNotExist:
+            print("context is empty")
+            return JsonResponse({'error': 'Order ID not found'})
         except:
-            render(request, 'store/ordered.html', context)
+            return render(request, 'store/ordered.html')
     return render(request, 'store/ordered.html')
 #-------------------------------------------------------------------------------
 def checkout(request):

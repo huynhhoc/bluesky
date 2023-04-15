@@ -47,20 +47,27 @@
 		</div>
 
 		<div class="col-lg-6">
+			<hr>
+			<h3>Order Summary</h3>
+			<hr>
 			<div class="box-element" id="cart-items">
-				<hr>
-				<h3>Order Summary</h3>
-				<hr>
-				{% for item in items %}
-				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
-					<div style="flex:2"><p>{{item.product.name}}</p></div>
-					<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
-					<div style="flex:1"><p>x{{item.quantity}}</p></div>
-				</div>
-				{% endfor %}
-				<h5>Items:   {{order.get_cart_items}}</h5>
-				<h5>Total:   ${{order.get_cart_total|floatformat:2}}</h5>
+				{% if items %}
+					{% for item in items %}
+					<div class="cart-row">
+						<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+						<div style="flex:2"><p>{{item.product.name}}</p></div>
+						<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
+						<div style="flex:1"><p>x{{item.quantity}}</p></div>
+					</div>
+					{% endfor %}
+					<h5>Items:   {{order.get_cart_items}}</h5>
+					<h5>Total:   ${{order.get_cart_total|floatformat:2}}</h5>
+				{% else %}
+					<h5>Your cart is empty</h5>
+					<script>
+						document.getElementById("cart-items").innerHTML = "";
+					</script>
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -114,10 +121,8 @@
 			})
 			.then((data) => {
 				console.log('Success:', data);
-				//alert('Transaction completed');
 				cart = {}
 				document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
-	
 				// Update the items in the cart
 				var itemsHtml = "";
 				for (var i = 0; i < data.items.length; i++) {
