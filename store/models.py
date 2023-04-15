@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -85,3 +87,12 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return self.address
 
+#@receiver(pre_save, sender=OrderItem)
+#def update_product_quantity(sender, instance, **kwargs):
+#    if instance.pk: # check if the instance is being updated
+#        old_instance = OrderItem.objects.get(pk=instance.pk)
+#        product = old_instance.product
+#        product.quantity += old_instance.quantity # add back the old quantity
+#    product = instance.product
+#    product.quantity -= instance.quantity
+#    product.save()
