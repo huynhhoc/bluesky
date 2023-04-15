@@ -31,33 +31,31 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 @csrf_exempt
 def searchOrdered(request):
-    items = []
-    cartItems = None
-    context = None
-    order = None
-    total = 0
-    try:
-        data = json.loads(request.body)
-        orderid = data['form']['order']
-        order_item = OrderItem.objects.get(id = orderid)
-        items = order_item.order.orderitem_set.all()
-        order = Order.objects.get(id=orderid)
-        # perform search logic
-        for item in items:
-            produce = item.product
-            quantity = item.quantity
-            get_total = item.get_total
-            print ("produce: ", produce, quantity, get_total)
-        #
-    except Exception as ex:
-        print ("error: ", ex)
-    #context = {'items': items,'order': order}
-    items = [ {'product': { 'name': 'Product 1', 'price': 10.0, 'imageURL': 'https://example.com/image.jpg' }, 'quantity': 2},
-                {'product': { 'name': 'Product 2', 'price': 20.0, 'imageURL': 'https://example.com/image.jpg' }, 'quantity': 1} ]
-    total = sum([item['product']['price'] * item['quantity'] for item in items])
-    context = {'items': items, 'cart_items': len(items), 'cart_total': total}
-    #print ("context: ", context)
-    return render(request, 'store/ordered.html', context)
+    if request.method == 'POST':
+        jitems = []
+        nItems = 0 
+        context = None
+        total = 0
+        try:
+            data = json.loads(request.body)
+            orderid = data['form']['order']
+            order_item = OrderItem.objects.get(id=orderid)
+            items = order_item.order.orderitem_set.all()
+            # perform search logic
+            for item in items:
+                produce = item.product.name
+                quantity = item.quantity
+                price = item.get_total
+                j_item = {'product': {'name': produce, 'price': price}, 'quantity': quantity}
+                jitems.append(j_item)
+            total = sum([item['product']['price'] * item['quantity'] for item in jitems])
+            nItems = len(jitems)
+            context = {'items': jitems, 'cart_items': nItems, 'cart_total': total}
+            print("context: ", context)
+            return render(request, 'store/ordered.html', context)
+        except json.decoder.JSONDecodeError:
+            pass
+    return render(request, 'store/ordered.html')
 #-------------------------------------------------------------------------------
 def checkout(request):
     data = cartData(request)
