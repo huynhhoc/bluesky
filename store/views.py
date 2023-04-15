@@ -30,17 +30,19 @@ def cart(request):
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 @csrf_exempt
-def searchOrdered(request):
+def search_ordered(request):
     if request.method == 'POST':
         jitems = []
         nItems = 0 
-        context = None
+        context = {'items': None, 'cart_items': 0, 'cart_total': 0}
         total = 0
         try:
             data = json.loads(request.body)
             orderid = data['form']['order']
-            order_item = OrderItem.objects.get(id=orderid)
-            items = order_item.order.orderitem_set.all()
+            orderid = Order.objects.get(id =orderid)
+            #order_item = OrderItem.objects.get(order=orderid)
+            items = OrderItem.objects.filter(order=orderid)
+            #items = order_item.order.orderitem_set.all()
             # perform search logic
             for item in items:
                 produce = item.product.name
@@ -52,9 +54,9 @@ def searchOrdered(request):
             nItems = len(jitems)
             context = {'items': jitems, 'cart_items': nItems, 'cart_total': total}
             print("context: ", context)
-            return render(request, 'store/ordered.html', context)
-        except json.decoder.JSONDecodeError:
-            pass
+            return JsonResponse(context) # send JSON response
+        except:
+            render(request, 'store/ordered.html', context)
     return render(request, 'store/ordered.html')
 #-------------------------------------------------------------------------------
 def checkout(request):
