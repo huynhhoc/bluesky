@@ -34,7 +34,7 @@ def search_ordered(request):
     if request.method == 'POST':
         jitems = []
         nItems = 0 
-        context = {'items': None, 'cart_items': 0, 'cart_total': 0}
+        context = {'items': {}, 'cart_items': 0, 'cart_total': 0}
         total = 0
         try:
             data = json.loads(request.body)
@@ -59,9 +59,7 @@ def search_ordered(request):
             render(request, 'store/ordered.html')
         except Order.DoesNotExist:
             print("context is empty")
-            return JsonResponse({'error': 'Order ID not found'})
-        except:
-            return render(request, 'store/ordered.html')
+            return render(request, 'store/ordered.html',context)
     return render(request, 'store/ordered.html')
 #-------------------------------------------------------------------------------
 def checkout(request):

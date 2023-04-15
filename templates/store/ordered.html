@@ -139,6 +139,7 @@
 				document.getElementById('cart-items').innerHTML = itemsHtml;
 			})
 			.catch((error) => {
+				document.getElementById('cart-items').innerHTML = 'Your cart is empty';
 				console.error('Error:', error);
 			});
 		}
