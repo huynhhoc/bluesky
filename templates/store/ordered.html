@@ -69,7 +69,7 @@
 					<div class="cart-row">
 						<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
 						<div style="flex:2"><p>{{item.product.name}}</p></div>
-						<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
+						<div style="flex:1"><p>{{item.product.price|floatformat:2}} VND</p></div>
 						<div style="flex:1"><p>x{{item.quantity}}</p></div>
 					</div>
 					{% endfor %}
@@ -149,12 +149,12 @@
 					itemsHtml += '<div class="cart-row">';
 					itemsHtml += '<div style="flex:2"><img class="row-image" src="' + item.product.imageURL + '"></div>';
 					itemsHtml += '<div style="flex:2"><p>' + item.product.name + '</p></div>';
-					itemsHtml += '<div style="flex:1"><p>$' + item.product.price.toFixed(2) + '</p></div>';
+					itemsHtml += '<div style="flex:1"><p>' + item.product.price.toFixed(2) + ' VND</p></div>';
 					itemsHtml += '<div style="flex:1"><p>x' + item.quantity + '</p></div>';
 					itemsHtml += '</div>';
 				}
 				itemsHtml += '<h5>Items:   ' + data.cart_items + '</h5>';
-				itemsHtml += '<h5>Total:   $' + data.cart_total.toFixed(2) + '</h5>';
+				itemsHtml += '<h5>Total:   ' + data.cart_total.toFixed(2) + ' VND</h5>';
 				// customer-info
 				customerinfoHtml +='<div class="form-field">'
 				customerinfoHtml +='<div style="flex:2"><p> Name: ' + data.shipping.customer.name + '</p></div>'
