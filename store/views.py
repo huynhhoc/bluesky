@@ -6,20 +6,6 @@ from django.db.models.signals import pre_save
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
 #create a function that will update the quantity of the product when an order item is created
-def update_add_product_quantity(sender, instance, **kwargs):
-    if isinstance(instance, OrderItem):
-        print("update_add_product_quantity")
-        product = instance.product
-        product.quantity -= 1#instance.quantity
-        product.save()
-
-def update_remove_product_quantity(sender, instance, **kwargs):
-    if isinstance(instance, OrderItem):
-        print("update_remove_product_quantity")
-        product = instance.product
-        product.quantity += 1#instance.quantity
-        product.save()
-
 def store(request):
     data = cartData(request)
 
@@ -96,11 +82,9 @@ def updateItem(request):
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
     if action == 'add':
-        orderItem.quantity += 1
-        pre_save.connect(update_add_product_quantity, sender=OrderItem)
+        orderItem.quantity = (orderItem.quantity + 1)
     elif action == 'remove':
-        orderItem.quantity -= 1
-        pre_save.connect(update_remove_product_quantity, sender=OrderItem)
+        orderItem.quantity = (orderItem.quantity - 1)
     
     orderItem.save()
 

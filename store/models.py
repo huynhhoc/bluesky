@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
+#from django.db.models.signals import pre_save
+#from django.dispatch import receiver
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -94,5 +94,7 @@ class ShippingAddress(models.Model):
 #        product = old_instance.product
 #        product.quantity += old_instance.quantity # add back the old quantity
 #    product = instance.product
-#    product.quantity -= instance.quantity
+#    print("quantity of product and OrderItem before:", product.name, product.quantity, instance.quantity)
+#    product.quantity -= 1 #instance.quantity
 #    product.save()
+#    print("quantity of product and OrderItem after:", product.name, product.quantity, instance.quantity)
