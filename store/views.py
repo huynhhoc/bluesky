@@ -40,10 +40,12 @@ def search_ordered(request):
             data = json.loads(request.body)
             orderid = data['form']['order']
             shippingAddress = ShippingAddress.objects.get(order=orderid)
+            client = Client.objects.get(order =orderid)
+
             orderid = Order.objects.get(id =orderid)
-            customer = Customer.objects.get(name=orderid.customer)
-            print("orderid: ",customer.name, customer.email, shippingAddress)
-            shipping = {'customer': {'name': customer.name, 'email': customer.email}, 
+            
+            print("orderid: ",client.name, client.email, shippingAddress)
+            shipping = {'customer': {'name': client.name, 'email': client.email}, 
                         'shippingAddress': {'adress': shippingAddress.address, 'city': shippingAddress.city, 'state': shippingAddress.state,
                                             'zipcode': shippingAddress.zipcode, 'date_added': shippingAddress.date_added.strftime('%F')}}
             items = OrderItem.objects.filter(order=orderid)
@@ -58,7 +60,7 @@ def search_ordered(request):
             total = sum([item['product']['price'] * item['quantity'] for item in jitems])
             nItems = len(jitems)
             context = {'items': jitems, 'cart_items': nItems, 'cart_total': total, 'shipping': shipping}
-            print("context: ", context)
+            #print("context: ", context)
             return JsonResponse(context) # send JSON response
         except json.decoder.JSONDecodeError:
             render(request, 'store/ordered.html')
@@ -126,6 +128,13 @@ def processOrder(request):
             city=data['shipping']['city'],
             state=data['shipping']['state'],
             zipcode=data['shipping']['zipcode'],
+        )
+
+        Client.objects.create(
+            customer=customer,
+            order=order,
+            name=data['client']['name'],
+            email=data['client']['email'],
         )
     
     return JsonResponse('Payment submitted..', safe=False)

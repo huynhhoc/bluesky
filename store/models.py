@@ -86,7 +86,14 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return self.address
-
+    
+class Client(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=200, null=True)
+    email = models.CharField(max_length=200, null=True)
+    def __str__(self):
+        return self.name
 #@receiver(pre_save, sender=OrderItem)
 #def update_product_quantity(sender, instance, **kwargs):
 #    if instance.pk: # check if the instance is being updated

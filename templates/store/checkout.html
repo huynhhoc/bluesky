@@ -151,12 +151,19 @@
 				'state':null,
 				'zipcode':null,
 			}
+			var clientInfo = {
+				'name': null,
+				'email': null
+			}
 
 			if (shipping != 'False'){
 	    		shippingInfo.address = form.address.value
 		    	shippingInfo.city = form.city.value
 		    	shippingInfo.state = form.state.value
 		    	shippingInfo.zipcode = form.zipcode.value
+
+				clientInfo.name = form.name.value
+				clientInfo.email = form.email.value
 	    	}
 
 	    	if (user == 'AnonymousUser'){
@@ -174,7 +181,7 @@
 	    			'Content-Type':'applicaiton/json',
 	    			'X-CSRFToken':csrftoken,
 	    		},
-	    		body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo}),
+	    		body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo, 'client': clientInfo}),
 
 	    	})
 	    	.then((response) => response.json())
