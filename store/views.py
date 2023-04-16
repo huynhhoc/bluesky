@@ -28,6 +28,7 @@ def cart(request):
 #-----------------------------------------------------------------------------
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+
 @csrf_exempt
 def search_ordered(request):
     if request.method == 'POST':
@@ -38,18 +39,25 @@ def search_ordered(request):
         try:
             data = json.loads(request.body)
             orderid = data['form']['order']
+            shippingAddress = ShippingAddress.objects.get(order=orderid)
             orderid = Order.objects.get(id =orderid)
+            customer = Customer.objects.get(name=orderid.customer)
+            print("orderid: ",customer.name, customer.email, shippingAddress)
+            shipping = {'customer': {'name': customer.name, 'email': customer.email}, 
+                        'shippingAddress': {'adress': shippingAddress.address, 'city': shippingAddress.city, 'state': shippingAddress.state,
+                                            'zipcode': shippingAddress.zipcode, 'date_added': shippingAddress.date_added.strftime('%F')}}
             items = OrderItem.objects.filter(order=orderid)
             # perform search logic
             for item in items:
                 produce = item.product.name
                 quantity = item.quantity
                 price = item.get_total
-                j_item = {'product': {'name': produce, 'price': price}, 'quantity': quantity}
+                imageURL = item.product.imageURL
+                j_item = {'product': {'name': produce, 'price': price, 'imageURL': imageURL}, 'quantity': quantity}
                 jitems.append(j_item)
             total = sum([item['product']['price'] * item['quantity'] for item in jitems])
             nItems = len(jitems)
-            context = {'items': jitems, 'cart_items': nItems, 'cart_total': total}
+            context = {'items': jitems, 'cart_items': nItems, 'cart_total': total, 'shipping': shipping}
             print("context: ", context)
             return JsonResponse(context) # send JSON response
         except json.decoder.JSONDecodeError:
