@@ -15,8 +15,8 @@ def update_product_quantity(sender, instance, **kwargs):
     product = instance.product
     print("quantity of product and OrderItem before:", product.name, product.quantity, instance.quantity)
     if oquantity > instance.quantity: #
-        product.quantity += 1 #instance.quantity
+        product.quantity += 1
     elif oquantity < instance.quantity:
-        product.quantity -= 1 #instance.quantity
+        product.quantity -= 1
     product.save()
     print("quantity of product and OrderItem after:", product.name, product.quantity, instance.quantity)

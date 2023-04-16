@@ -94,14 +94,3 @@ class Client(models.Model):
     email = models.CharField(max_length=200, null=True)
     def __str__(self):
         return self.name
-#@receiver(pre_save, sender=OrderItem)
-#def update_product_quantity(sender, instance, **kwargs):
-#    if instance.pk: # check if the instance is being updated
-#        old_instance = OrderItem.objects.get(pk=instance.pk)
-#        product = old_instance.product
-#        product.quantity += old_instance.quantity # add back the old quantity
-#    product = instance.product
-#    print("quantity of product and OrderItem before:", product.name, product.quantity, instance.quantity)
-#    product.quantity -= 1 #instance.quantity
-#    product.save()
-#    print("quantity of product and OrderItem after:", product.name, product.quantity, instance.quantity)
